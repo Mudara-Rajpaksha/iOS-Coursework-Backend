@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const userModel = require('../models/user.model');
+const walletModel = require('../models/wallet.model');
 const dotenv = require('dotenv')
 dotenv.config()
 const db = {};
@@ -10,6 +11,7 @@ const connectDatabase = async() => {
 
 connectDatabase().then(connection => {
     db.user = userModel.UserSchema(connection)
+    db.wallet = walletModel.WalletSchema(connection)
 })
 
 module.exports = db;
