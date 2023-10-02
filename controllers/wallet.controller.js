@@ -16,8 +16,8 @@ exports.addTransaction = (req, res) => {
         $push: {transactionList: {$each: [newTransactionData], $position: 0}}
     }, {new: true, upsert: true}).then(r => {
         if (r != null) {
-            console.log(`wallet updated ${r}`);
-            res.status(200).send({status: true, data: r})
+            console.log(`wallet updated ${newTransactionData}`);
+            res.status(200).send({status: true, data: newTransactionData})
         } else {
             res.status(400).send({status: false, message: 'Update Error'});
         }
@@ -27,9 +27,14 @@ exports.addTransaction = (req, res) => {
 exports.getTransactionList = async (req, res) => {
     let isFiltered = false;
     let filterType = null;
+    let transType = null;
 
     if ('filterType' in req.body) {
         filterType = req.body.filterType;
+    }
+
+    if ('transType' in req.body) {
+        transType = req.body.transType;
     }
 
     const user = await db.wallet.findOne({userId: req.body.userId});
@@ -44,10 +49,12 @@ exports.getTransactionList = async (req, res) => {
 
     const filteredTransactions = filterTransactions(user.transactionList, filterType, new Date());
 
+    const filteredTransactionsType = filterTypes(filteredTransactions, transType);
+
     res.status(200).send({
         status: true, data: {
             isFiltered: isFiltered,
-            transactionList: filteredTransactions
+            transactionList: filteredTransactionsType
         }
     })
 }
@@ -113,16 +120,30 @@ exports.getWalletDetails = async (req, res) => {
 function filterTransactions(transactions, filter, currentDate) {
     return transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.transactionDate);
-        if (filter === "1") {
+        if (filter === "0") {
             return (
                 transactionDate.getDate() === currentDate.getDate()
             );
-        } else if (filter === "2") {
+        } else if (filter === "1") {
             return (
                 transactionDate.getMonth() === currentDate.getMonth()
             );
-        } else if (filter === "3") {
+        } else if (filter === "2") {
             return transactionDate.getFullYear() === currentDate.getFullYear();
+        } else {
+            return true;
+        }
+    });
+}
+
+function filterTypes(transactions, type) {
+    return transactions.filter((transaction) => {
+        if (type === "0") {
+            return true;
+        } else if (type === "1") {
+            return transaction.transactionType === 1;
+        } else if (type === "2") {
+            return transaction.transactionType === 2;
         } else {
             return true;
         }

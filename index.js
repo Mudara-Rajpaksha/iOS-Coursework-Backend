@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const UserRouter = require("./routes/user.routes");
+const WalletRouter = require("./routes/wallet.routes");
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -26,5 +27,6 @@ app.get('/', function(req, res) {
 })
 
 UserRouter.routesConfig(app);
+WalletRouter.routesConfig(app);
 
 app.listen(process.env.PORT, () => console.log(`App is listening port ${process.env.PORT} and connected to ${process.env.MONGOOSE_CONNECTION}`))

@@ -9,19 +9,19 @@ exports.routesConfig = function(app) {
         WalletController.addTransaction
     ]);
 
-    app.get('/wallet/getTransactionList', [
+    app.post('/wallet/getTransactionList', [
         UserMiddleware.checkValidJWT,
         WalletMiddleware.validateGetList,
         WalletController.getTransactionList
     ]);
 
-    app.get('/wallet/getTransaction', [
+    app.post('/wallet/getTransaction', [
         UserMiddleware.checkValidJWT,
         WalletMiddleware.validateGetTransaction,
         WalletController.getTransaction
     ]);
 
-    app.get('/wallet/getWalletDetails', [
+    app.post('/wallet/getWalletDetails', [
         UserMiddleware.checkValidJWT,
         WalletMiddleware.validateGetList,
         WalletController.getWalletDetails
